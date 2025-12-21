@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: service-a
+
+server:
+  port: 8080
+
+# WebClient configuration for Service B
+service-b:
+  base-url: ${SERVICE_B_URL:http://localhost:8081}
+  timeout:
+    connection: 5000      # Connection timeout in ms
+    response: 30000       # Response timeout in ms (30 seconds for slow queries)
+  retry:
+    max-attempts: 3       # Maximum retry attempts
+    backoff:
+      initial: 1000       # Initial backoff in ms
+      max: 5000           # Maximum backoff in ms
+      multiplier: 2       # Backoff multiplier
+
+logging:
+  level:
+    root: INFO
+    com.example.client: DEBUG
+    reactor.netty.http.client: DEBUG

@@ -1,0 +1,86 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: lab3-postgres
+    environment:
+      POSTGRES_DB: grades_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - lab3-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Service B (Server)
+  service-b:
+    build:
+      context: ./service-b
+      dockerfile: Dockerfile
+    container_name: lab3-service-b
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: grades_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JAVA_TOOL_OPTIONS: >-
+        -XX:StartFlightRecording=filename=/jfr/lab3-grades.jfr,dumponexit=true,settings=profile
+        -Dcom.sun.management.jmxremote=true
+        -Dcom.sun.management.jmxremote.port=9011
+        -Dcom.sun.management.jmxremote.rmi.port=9011
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=localhost
+    ports:
+      - "8081:8081"
+      - "9011:9011"
+    volumes:
+      - ./jfr-dumps:/jfr
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lab3-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8081/api/grades/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Service A (Client)
+  service-a:
+    build:
+      context: ./service-a
+      dockerfile: Dockerfile
+    container_name: lab3-service-a
+    environment:
+      SERVICE_B_URL: http://service-b:8081
+    ports:
+      - "8080:8080"
+    depends_on:
+      service-b:
+        condition: service_healthy
+    networks:
+      - lab3-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/api/client/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+networks:
+  lab3-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
