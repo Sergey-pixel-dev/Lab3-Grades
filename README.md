@@ -141,7 +141,7 @@ Integer countDistinctStudentsByCourseName(String courseName);
 
 ### Выводы
 
-В ходе лабораторной работы были изучены инструменты профилирования Java приложений: Java Flight Recorder (JFR), Java Mission Control (JMC), VisualVM и Async Profiler.
+В ходе лабораторной работы были изучены инструменты профилирования Java приложений: Java Flight Recorder (JFR), Java Mission Control (JMC).
 
 С помощью этих инструментов в микросервисе вычисления среднего балла студентов были обнаружены критические проблемы производительности:
 1. **Загрузка всех 100,000+ оценок в память** вместо фильтрации на уровне БД (18+ секунд)
