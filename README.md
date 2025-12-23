@@ -15,7 +15,7 @@
 
 ### Цель работы
 
-Научиться использовать инструменты профилирования Java приложений (Java Flight Recorder, Java Mission Control, VisualVM, Async Profiler) для поиска и устранения узких мест производительности в микросервисной архитектуре на Spring Boot.
+Научиться использовать инструменты профилирования Java приложений (Java Flight Recorder, Async Profiler) для поиска и устранения узких мест производительности в микросервисной архитектуре на Spring Boot.
 
 ### Результаты профилирования
 
@@ -25,6 +25,8 @@
 
 ![SQL profile](https://github.com/Sergey-pixel-dev/Lab3-Grades/raw/main/sql_lab2.png)
 
+![Async cpu](https://github.com/Sergey-pixel-dev/Lab3-Grades/raw/main/async_cpu_lab2.png)
+![Async alloc](https://github.com/Sergey-pixel-dev/Lab3-Grades/raw/main/async_alloc_lab2.png)
 
 ### Примененные оптимизации
 
@@ -139,9 +141,12 @@ Integer countDistinctStudentsByCourseName(String courseName);
 
 ![SQL profile](https://github.com/Sergey-pixel-dev/Lab3-Grades/raw/main/sql_lab3.png)
 
+![Async cpu](https://github.com/Sergey-pixel-dev/Lab3-Grades/raw/main/async_cpu_lab3.png)
+![Async alloc](https://github.com/Sergey-pixel-dev/Lab3-Grades/raw/main/async_alloc_lab3.png)
+
 ### Выводы
 
-В ходе лабораторной работы были изучены инструменты профилирования Java приложений: Java Flight Recorder (JFR), Java Mission Control (JMC).
+В ходе лабораторной работы были изучены инструменты профилирования Java приложений: Java Flight Recorder (JFR), Async Profiler.
 
 С помощью этих инструментов в микросервисе вычисления среднего балла студентов были обнаружены критические проблемы производительности:
 1. **Загрузка всех 100,000+ оценок в память** вместо фильтрации на уровне БД (18+ секунд)
